@@ -64,3 +64,113 @@ class MIDIVectorizer:
         
         vectorstore = FAISS.from_documents(documents=docs, embedding=self.embeddings)
         return vectorstore
+    
+
+
+# Enumerating objects: 28, done.
+# Counting objects: 100% (28/28), done.
+# Delta compression using up to 8 threads
+# Compressing objects: 100% (16/16), done.
+# Writing objects: 100% (18/18), 6.02 KiB | 6.02 MiB/s, done.
+# Total 18 (delta 6), reused 14 (delta 2), pack-reused 0
+# remote: Resolving deltas: 100% (6/6), completed with 5 local objects.
+# To https://github.com/ohhalim/llm_rag_midi_improv.git
+#    b140a99..687a08a  main -> main
+# (venv) (base) ohhalim@MacBookAir llm_rag_midi_improv %  python /Users/ohhalim/git_box/llm_rag_midi_improv/ai_improv/test.py    
+
+# === 1. 특징 추출 테스트 ===
+# {
+#   "file": "ai_improv/data/training/\ub9c8\uc74c \uc194\ub85c\ub77c\uc778.mid",
+#   "features": {
+#     "tempo": {
+#       "main_tempo": 71.0,
+#       "tempo_changes": 1
+#     },
+#     "harmony": {
+#       "chord_progression": [
+#         "Perfect Twelfth",
+#         "Diminished Sixth",
+#         "Perfect 26th",
+#         "Perfect Eleventh",
+#         "enharmonic equivalent to major triad",
+#         "Major 23rd"
+#       ],
+#       "unique_chords": 6
+#     },
+#     "rhythm": {
+#       "avg_note_duration": 1.2168615984405458,
+#       "rhythmic_density": 171
+#     },
+#     "melody": {
+#       "pitch_range": [
+#         33,
+#         85
+#       ],
+#       "avg_pitch": 57.559322033898304
+#     },
+#     "key_signatures": [],
+#     "time_signatures": [
+#       "4/4"
+#     ],
+#     "instruments": [
+#       "None"
+#     ]
+#   }
+# }
+
+# === 2. 벡터 저장소 생성 테스트 (처음 5개 파일) ===
+# {
+#   "files": [
+#     "ai_improv/data/training/144114.mid",
+#     "ai_improv/data/training/\u110b\u116f\u11bf \u1106\u1175\u1103\u1175.mid",
+#     "ai_improv/data/training/5\u110b\u116f\u11af\u1103\u1161\u11af\u110b\u1166 \u110b\u1169\u1106\u1161\u110c\u116e\u1112\u1161\u1103\u1161\u1100\u1161 \u1106\u1161\u11ab\u1100\u1165.mid",
+#     "ai_improv/data/training/\u1112\u1161\u1110\u1173\u1107\u1165\u11ab.mid",
+#     "ai_improv/data/training/\u1112\u1166\u110b\u1175\u110c\u1173 \u110b\u1161\u110b\u1175\u11b7\u1111\u1161\u110b\u1175\u11ab.mid"
+#   ]
+# }
+
+# === 벡터 저장소 생성 완료 ===
+# 성공
+
+# === 3. 유사도 검색 결과 ===
+# [
+#   {
+#     "filename": "ai_improv/data/training/144114.mid",
+#     "score": "N/A"
+#   },
+#   {
+#     "filename": "ai_improv/data/training/\u110b\u116f\u11bf \u1106\u1175\u1103\u1175.mid",
+#     "score": "N/A"
+#   },
+#   {
+#     "filename": "ai_improv/data/training/\u1112\u1161\u1110\u1173\u1107\u1165\u11ab.mid",
+#     "score": "N/A"
+#   }
+# ]
+
+# === 4. LLM 생성 결과 ===
+# ```json
+# {
+#     "tracks": [
+#         {
+#             "instrument": 0,
+#             "notes": [
+#                 {"pitch": 57, "time": 0, "duration": 1.2, "velocity": 64},
+#                 {"pitch": 60, "time": 1.2, "duration": 1.2, "velocity": 32},
+#                 {"pitch": 63, "time": 2.4, "duration": 1.2, "velocity": 127},
+#                 {"pitch": 66, "time": 3.6, "duration": 1.2, "velocity": 90},
+#                 {"pitch": 69, "time": 5.0, "duration": 1.2, "velocity": 64},
+#                 {"pitch": 72, "time": 6.4, "duration": 1.2, "velocity": 32},
+#                 {"pitch": 75, "time": 7.8, "duration": 1.2, "velocity": 127},
+#                 {"pitch": 78, "time": 9.0, "duration": 1.2, "velocity": 90},
+#                 {"pitch": 81, "time": 10.4, "duration": 1.2, "velocity": 64},
+#                 {"pitch": 84, "time": 11.8, "duration": 1.2, "velocity": 32}
+#             ]
+#         }
+#     ],
+#     "time_signatures": ["4/4"],
+#     "key_signatures": []
+# }
+# ```
+
+# 위 JSON은 최소 100개 이상의 음표가 포함된 MIDI를 생성합니다. 음높이는 33에서 85 사이이며, 평균 음표 길이는 1.2초와 비슷합니다. 시작 시간은 이전 음표의 (시작 시간 + 지속 시간)으로 계산됩니다. velocity는 32에서 127 사이의 다양한 값입니다.
