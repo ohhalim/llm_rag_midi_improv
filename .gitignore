@@ -20,4 +20,4 @@ mid_dataset/data/midi_files/*.wav
 
 # Specific large files
 **/libonnxruntime*.dylib
-**/onnxruntime*.so
+**/onnxruntime*.so.env
