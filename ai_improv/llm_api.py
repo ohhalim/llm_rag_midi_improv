@@ -4,6 +4,7 @@ import json
 import re
 import ast
 import math
+import random
 
 class LLMAPI:
     def __init__(self):
@@ -124,6 +125,92 @@ class LLMAPI:
         except json.JSONDecodeError as e:
             raise ValueError(f"JSON 파싱 오류: {str(e)}\n원본 JSON: {json_str}")
     
+    def enhance_solo(self, json_response, min_notes=100):
+        """LLM이 생성한 짧은 솔로라인을 확장합니다."""
+        try:
+            data = json.loads(json_response)
+            
+            # 확장이 필요한지 확인
+            total_notes = 0
+            for track in data.get('tracks', []):
+                total_notes += len(track.get('notes', []))
+            
+            # 노트 수가 충분하면 그대로 반환
+            if total_notes >= min_notes:
+                return json_response
+                
+            print(f"노트 수가 부족합니다: {total_notes}개. {min_notes}개로 확장합니다.")
+            
+            # 각 트랙의 노트 확장
+            for track in data.get('tracks', []):
+                notes = track.get('notes', [])
+                if not notes:
+                    continue
+                    
+                # 기존 노트 패턴 분석
+                pitches = [note['pitch'] for note in notes]
+                durations = [note['duration'] for note in notes]
+                velocities = [note['velocity'] for note in notes]
+                
+                # 마지막 시간 계산
+                if notes:
+                    last_time = max(note['time'] + note['duration'] for note in notes)
+                else:
+                    last_time = 0
+                    
+                # 필요한 추가 노트 수 계산
+                needed_notes = max(0, min_notes - total_notes)
+                
+                # 새로운 노트 생성
+                new_notes = []
+                current_time = last_time
+                
+                # 1. 기존 패턴 반복
+                pattern_length = len(notes)
+                repetitions = needed_notes // pattern_length + 1
+                
+                for i in range(repetitions):
+                    for j, original_note in enumerate(notes):
+                        # 모든 노트가 생성되면 종료
+                        if len(new_notes) >= needed_notes:
+                            break
+                            
+                        # 원본 노트 복사
+                        new_note = original_note.copy()
+                        
+                        # 시간 조정
+                        new_note['time'] = current_time + (original_note['time'] if j == 0 else new_notes[-1]['time'] + new_notes[-1]['duration'])
+                        
+                        # 작은 변형 추가 (피치, 길이, 세기 약간 변경)
+                        if random.random() < 0.3:  # 30% 확률로 변형
+                            # 피치 변형 (원래 피치에서 ±3 범위 내에서 변경, 음계 내에서)
+                            pitch_change = random.choice([-3, -2, -1, 0, 1, 2, 3])
+                            new_note['pitch'] = max(33, min(85, new_note['pitch'] + pitch_change))
+                            
+                            # 길이 변형 (원래 길이의 0.8~1.2배)
+                            duration_factor = 0.8 + random.random() * 0.4  # 0.8 ~ 1.2
+                            new_note['duration'] = new_note['duration'] * duration_factor
+                            
+                            # 세기 변형 (원래 세기에서 ±10 범위 내에서 변경)
+                            velocity_change = random.randint(-10, 10)
+                            new_note['velocity'] = max(32, min(127, new_note['velocity'] + velocity_change))
+                        
+                        new_notes.append(new_note)
+                        
+                    # 다음 반복을 위한 시간 업데이트
+                    if new_notes:
+                        current_time = new_notes[-1]['time'] + new_notes[-1]['duration']
+                
+                # 기존 노트에 추가
+                track['notes'].extend(new_notes)
+                total_notes += len(new_notes)
+                
+            return json.dumps(data, indent=2)
+            
+        except Exception as e:
+            print(f"솔로 확장 중 오류 발생: {str(e)}")
+            return json_response
+    
     def generate_response(self, input_features, similar_features):
         """LLM을 사용하여 응답 생성하고 정제된 JSON 반환"""
         prompt_value = self.prompt.format(
@@ -136,7 +223,11 @@ class LLMAPI:
         try:
             # 응답에서 JSON 추출 및 정제
             cleaned_json = self.clean_llm_response(response)
-            return cleaned_json
+            
+            # 솔로라인 확장 (최소 100개 음표)
+            enhanced_json = self.enhance_solo(cleaned_json, min_notes=100)
+            
+            return enhanced_json
         except Exception as e:
             print(f"응답 정제 중 오류 발생: {str(e)}")
             print(f"원본 응답: {response}")

@@ -1,35 +1,87 @@
 import random
 import json
 
-# default parameters
-tracks = []
-key_signatures = ["C major"]
-time_signatures = ["4/4"]
 
-def generate_midi():
-    # generate notes with given constraints
-    notes = []
-    for _ in range(100):
-        pitch = random.randint(33, 85)
-        time = round(random.uniform(0, 1) * 120)
-        duration = round(random.uniform(0.6, 1.2), 3)
+# 기본 특징
+def get_default_midi_features():
+    return {
+        'main_tempo': 110,
+        'tempo_changes': 1,
+        'harmony_chord_progression': [],
+        'unique_chords': 3,
+        'avg_note_duration': 0.9230769230769231,
+        'rhythmic_density': 104,
+        'melody_pitch_range': None,
+        'melody_avg_pitch': None
+    }
+
+
+# 멜로디 특징
+def get_default_melody_features():
+    return {
+        'notes_count': 0,
+        'pitch_range': [],
+        'avg_note_duration': 0,
+        'avg_pitch': 0
+    }
+
+
+# 구조적 특징
+def get_default_structure_features():
+    return {
+        'tracks_count': 0,
+        'total_length': 0.0,
+        'code_progression': []
+    }
+
+
+# 음악 특징을 만족하는 MIDI 생성
+def generate_midi(file_name):
+    default_midi = get_default_midi_features()
+    default_melody = get_default_melody_features()
+    default_structure = get_default_structure_features()
+
+    # 템포
+    midi['tempo'] = {'main_tempo': random.randint(100, 120), 'tempo_changes': 1}
+
+    # 조표
+    midi['harmony']['chord_progression'] = []
+
+    # 박자
+    midi['time_signatures'] = ['4/4']
+
+    # 사용된 악기
+    midi['instruments'] = ['None']
+
+    # 멜로디
+    default_melody['notes_count'] = 100
+    for _ in range(default_melody['notes_count']):
+        pitch_range = random.randint(33, 85)
+        time = round(random.uniform(0.2, 1.8) * midi['tempo']['main_tempo'], 3)
+        duration = 1.2
         velocity = random.randint(32, 127)
-        notes.append({"pitch": pitch, "time": time, "duration": duration, "velocity": velocity})
-    
-    # create track with generated notes
-    tracks.append({
-        "instrument": 0,
-        "notes": notes
-    })
 
-# generate midi
-generate_midi()
+        # 노트 생성
+        default_melody['notes'].append({
+            'pitch': pitch_range,
+            'time': time,
+            'duration': duration,
+            'velocity': velocity
+        })
 
-# create final json response
-json_response = {
-    "tracks": tracks,
-    "time_signatures": time_signatures,
-    "key_signatures": key_signatures
-}
+    # 구조적 특징
+    midi['melody'] = default_melody
 
-print(json.dumps(json_response))
+    midi['tracks'] = [
+        {
+            "instrument": 0,
+            "notes": default_melody["notes"]
+        }
+    ]
+
+    # 시간 계산 (ex: 2.4)
+    total_time = sum([note['duration'] for note in default_melody['notes']])
+    midi['time_signatures'] = ['4/4']
+    start_time = round(total_time / len(default_melody["notes"]), 3)
+
+    return json.dumps(midi, indent=2)

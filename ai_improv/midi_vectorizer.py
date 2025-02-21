@@ -1,9 +1,11 @@
 # midi_vectorizer.py
 from typing import List, Dict
+import os
 from langchain_core.documents import Document
 from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaEmbeddings
 from midi_feature_extractor import MIDIFeatureExtractor
+
 class MIDIVectorizer:
     def __init__(self):
         self.embeddings = OllamaEmbeddings(
@@ -65,7 +67,30 @@ class MIDIVectorizer:
         vectorstore = FAISS.from_documents(documents=docs, embedding=self.embeddings)
         return vectorstore
     
-
+    def save_vectorstore(self, vectorstore, save_path: str):
+        """벡터 저장소를 파일로 저장"""
+        try:
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            vectorstore.save_local(save_path)
+            print(f"벡터 저장소가 {save_path}에 저장되었습니다.")
+            return True
+        except Exception as e:
+            print(f"벡터 저장소 저장 중 오류 발생: {str(e)}")
+            return False
+    
+    def load_vectorstore(self, load_path: str):
+        """저장된 벡터 저장소 로드"""
+        try:
+            if os.path.exists(load_path):
+                vectorstore = FAISS.load_local(load_path, self.embeddings)
+                print(f"벡터 저장소를 {load_path}에서 로드했습니다.")
+                return vectorstore
+            else:
+                print(f"벡터 저장소 파일을 찾을 수 없습니다: {load_path}")
+                return None
+        except Exception as e:
+            print(f"벡터 저장소 로드 중 오류 발생: {str(e)}")
+            return None
 
 # Enumerating objects: 28, done.
 # Counting objects: 100% (28/28), done.
@@ -174,3 +199,7 @@ class MIDIVectorizer:
 # ```
 
 # 위 JSON은 최소 100개 이상의 음표가 포함된 MIDI를 생성합니다. 음높이는 33에서 85 사이이며, 평균 음표 길이는 1.2초와 비슷합니다. 시작 시간은 이전 음표의 (시작 시간 + 지속 시간)으로 계산됩니다. velocity는 32에서 127 사이의 다양한 값입니다.
+
+
+
+# 전처리 , 청크 ,파싱 , 
