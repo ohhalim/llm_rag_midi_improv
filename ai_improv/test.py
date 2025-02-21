@@ -5,6 +5,8 @@ from midi_feature_extractor import MIDIFeatureExtractor
 from midi_vectorizer import MIDIVectorizer
 from llm_api import LLMAPI
 
+# python test.py
+
 # 디버그 로깅 함수
 def log_step(step_name, data, save_to_file=False):
     print(f"\n=== {step_name} ===")

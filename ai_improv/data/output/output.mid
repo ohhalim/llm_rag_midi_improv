@@ -1,0 +1,28 @@
+```
+{
+    "tracks": [
+        {
+            "instrument": 0,
+            "notes": [
+                {"pitch": 58, "time": 10.8, "duration": 1.2, "velocity": 64},
+                {"pitch": 61, "time": 12.6, "duration": 1.2, "velocity": 96},
+                {"pitch": 67, "time": 14.4, "duration": 1.2, "velocity": 48},
+                {"pitch": 71, "time": 16.2, "duration": 1.2, "velocity": 32},
+                {"pitch": 76, "time": 17.8, "duration": 1.2, "velocity": 112},
+                {"pitch": 79, "time": 19.4, "duration": 1.2, "velocity": 64},
+                {"pitch": 83, "time": 20.6, "duration": 1.2, "velocity": 48},
+                {"pitch": 77, "time": 22.8, "duration": 1.2, "velocity": 96},
+                {"pitch": 74, "time": 25.4, "duration": 1.2, "velocity": 32},
+                {"pitch": 69, "time": 27, "duration": 1.2, "velocity": 112},
+                {"pitch": 63, "time": 28.6, "duration": 1.2, "velocity": 64},
+                {"pitch": 57, "time": 30.4, "duration": 1.2, "velocity": 48},
+                {"pitch": 51, "time": 31.8, "duration": 1.2, "velocity": 96}
+            ]
+        }
+    ],
+    "time_signatures": ["4/4"],
+    "key_signatures": []
+}
+```
+ 
+Note: Above JSON은 예시로 only 사용되며, 실제로 생성되는 JSON은 다양한 속성 및 특징을 포함할 수 있습니다.
