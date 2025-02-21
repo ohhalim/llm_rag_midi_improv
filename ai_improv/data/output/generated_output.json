@@ -1,0 +1,25 @@
+```json
+{
+    "tracks": [
+        {
+            "instrument": 0,
+            "notes": [
+                {"pitch": 43, "time": 0.5, "duration": 1.2, "velocity": 64},
+                {"pitch": 68, "time": 1.1, "duration": 1.2, "velocity": 32},
+                {"pitch": 76, "time": 1.8, "duration": 1.2, "velocity": 91},
+                {"pitch": 51, "time": 3.0, "duration": 1.2, "velocity": 64},
+                {"pitch": 73, "time": 4.1, "duration": 1.2, "velocity": 32},
+                {"pitch": 58, "time": 5.2, "duration": 1.2, "velocity": 91},
+                {"pitch": 66, "time": 6.3, "duration": 1.2, "velocity": 64},
+                {"pitch": 42, "time": 7.4, "duration": 1.2, "velocity": 32},
+                {"pitch": 76, "time": 8.5, "duration": 1.2, "velocity": 91},
+                {"pitch": 51, "time": 9.6, "duration": 1.2, "velocity": 64},
+                {"pitch": 73, "time": 10.7, "duration": 1.2, "velocity": 32},
+                {"pitch": 58, "time": 11.8, "duration": 1.2, "velocity": 91}
+            ]
+        }
+    ],
+    "time_signatures": ["4/4"],
+    "key_signatures": []
+}
+```
