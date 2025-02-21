@@ -1,0 +1,97 @@
+{
+  "tracks": [
+    {
+      "instrument": 0,
+      "notes": [
+        {
+          "pitch": 73,
+          "time": 5.4,
+          "duration": 1.2,
+          "velocity": 64
+        },
+        {
+          "pitch": 77,
+          "time": 12.399999999999999,
+          "duration": 1.5,
+          "velocity": 32
+        },
+        {
+          "pitch": 76,
+          "time": 19.2,
+          "duration": 1.4,
+          "velocity": 67
+        },
+        {
+          "pitch": 74,
+          "time": 26.6,
+          "duration": 1.6,
+          "velocity": 51
+        },
+        {
+          "pitch": 72,
+          "time": 32.2,
+          "duration": 1.5,
+          "velocity": 32
+        },
+        {
+          "pitch": 75,
+          "time": 39.2,
+          "duration": 1.3,
+          "velocity": 64
+        },
+        {
+          "pitch": 74,
+          "time": 46.2,
+          "duration": 1.4,
+          "velocity": 51
+        },
+        {
+          "pitch": 77,
+          "time": 53.400000000000006,
+          "duration": 1.5,
+          "velocity": 67
+        },
+        {
+          "pitch": 76,
+          "time": 60.2,
+          "duration": 1.4,
+          "velocity": 64
+        },
+        {
+          "pitch": 74,
+          "time": 67.6,
+          "duration": 1.6,
+          "velocity": 51
+        },
+        {
+          "pitch": 73,
+          "time": 74.2,
+          "duration": 1.5,
+          "velocity": 64
+        },
+        {
+          "pitch": 77,
+          "time": 81.19999999999999,
+          "duration": 1.3,
+          "velocity": 67
+        },
+        {
+          "pitch": 76,
+          "time": 87.0,
+          "duration": 1.4,
+          "velocity": 64
+        },
+        {
+          "pitch": 74,
+          "time": 93.2,
+          "duration": 1.5,
+          "velocity": 51
+        }
+      ]
+    }
+  ],
+  "time_signatures": [
+    "4/4"
+  ],
+  "key_signatures": []
+}

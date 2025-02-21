@@ -1,0 +1,20 @@
+[
+  {
+    "filename": "/Users/ohhalim/git_box/llm_rag_midi_improv/ai_improv/data/training/헤이즈 아임파인.mid",
+    "score": "N/A",
+    "musical_style": "분석된 스타일",
+    "snippet": "\n        파일명: /Users/ohhalim/git_box/llm_rag_midi_improv/ai_improv/data/training/헤이즈 아임파인.mid\n        \n        기본 특징:\n        - 템포: {'main_tempo': 180.0, 'tempo_changes': 1}\n        - 조표: []\n..."
+  },
+  {
+    "filename": "/Users/ohhalim/git_box/llm_rag_midi_improv/ai_improv/data/training/144114.mid",
+    "score": "N/A",
+    "musical_style": "분석된 스타일",
+    "snippet": "\n        파일명: /Users/ohhalim/git_box/llm_rag_midi_improv/ai_improv/data/training/144114.mid\n        \n        기본 특징:\n        - 템포: {'main_tempo': 115.0, 'tempo_changes': 1}\n        - 조표: ['B- major']\n ..."
+  },
+  {
+    "filename": "/Users/ohhalim/git_box/llm_rag_midi_improv/ai_improv/data/training/웤 미디.mid",
+    "score": "N/A",
+    "musical_style": "분석된 스타일",
+    "snippet": "\n        파일명: /Users/ohhalim/git_box/llm_rag_midi_improv/ai_improv/data/training/웤 미디.mid\n        \n        기본 특징:\n        - 템포: {'main_tempo': 120.0, 'tempo_changes': 1}\n        - 조표: ['g# minor']..."
+  }
+]

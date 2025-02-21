@@ -1,0 +1,68 @@
+{
+  "tracks": [
+    {
+      "instrument": 0,
+      "notes": [
+        {
+          "pitch": 58,
+          "time": 24,
+          "duration": 120
+        },
+        {
+          "pitch": 63,
+          "time": 36,
+          "duration": 120
+        },
+        {
+          "pitch": 72,
+          "time": 48,
+          "duration": 120
+        },
+        {
+          "pitch": 78,
+          "time": 60,
+          "duration": 120
+        },
+        {
+          "pitch": 83,
+          "time": 72,
+          "duration": 120
+        },
+        {
+          "pitch": 88,
+          "time": 84,
+          "duration": 120
+        },
+        {
+          "pitch": 91,
+          "time": 96,
+          "duration": 120
+        },
+        {
+          "pitch": 97,
+          "time": 108,
+          "duration": 120
+        },
+        {
+          "pitch": 99,
+          "time": 120,
+          "duration": 120
+        },
+        {
+          "pitch": 101,
+          "time": 132,
+          "duration": 120
+        },
+        {
+          "pitch": 103,
+          "time": 144,
+          "duration": 120
+        }
+      ]
+    }
+  ],
+  "time_signatures": [
+    "4/4"
+  ],
+  "key_signatures": []
+}

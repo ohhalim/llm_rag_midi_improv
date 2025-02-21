@@ -1,0 +1,35 @@
+import random
+import json
+
+# default parameters
+tracks = []
+key_signatures = ["C major"]
+time_signatures = ["4/4"]
+
+def generate_midi():
+    # generate notes with given constraints
+    notes = []
+    for _ in range(100):
+        pitch = random.randint(33, 85)
+        time = round(random.uniform(0, 1) * 120)
+        duration = round(random.uniform(0.6, 1.2), 3)
+        velocity = random.randint(32, 127)
+        notes.append({"pitch": pitch, "time": time, "duration": duration, "velocity": velocity})
+    
+    # create track with generated notes
+    tracks.append({
+        "instrument": 0,
+        "notes": notes
+    })
+
+# generate midi
+generate_midi()
+
+# create final json response
+json_response = {
+    "tracks": tracks,
+    "time_signatures": time_signatures,
+    "key_signatures": key_signatures
+}
+
+print(json.dumps(json_response))
