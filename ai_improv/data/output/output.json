@@ -1,53 +1,35 @@
-below는 Python의 `midiutil` library를 사용하여 새로운 MIDI를 생성하는 예입니다.
+import random
+import json
 
-```python
-from midiutil import MIDIFile
+# default parameters
+tracks = []
+key_signatures = ["C major"]
+time_signatures = ["4/4"]
 
-# 기본 특징 
-main_tempo = 130.0
-avg_note_duration = 1200 / 1000 # 평균 음표 길이 (ms)
+def generate_midi():
+    # generate notes with given constraints
+    notes = []
+    for _ in range(100):
+        pitch = random.randint(33, 85)
+        time = round(random.uniform(0, 1) * 120)
+        duration = round(random.uniform(0.6, 1.2), 3)
+        velocity = random.randint(32, 127)
+        notes.append({"pitch": pitch, "time": time, "duration": duration, "velocity": velocity})
+    
+    # create track with generated notes
+    tracks.append({
+        "instrument": 0,
+        "notes": notes
+    })
 
-# 음표 수, 음높이 범위, 평균 음길이, 평균 세기
-note_count = 100
-pitch_range = range(33, 86) # 33에서 85 사이
-avg_pitch = sum(pitch_range) / len(pitch_range)
-avg_note_duration_ms = avg_note_duration * 1000 #平均 음표 길이 (ms)
+# generate midi
+generate_midi()
 
-# 시간 계산 
-time_signature = "4/4"
-num_tracks = 1
+# create final json response
+json_response = {
+    "tracks": tracks,
+    "time_signatures": time_signatures,
+    "key_signatures": key_signatures
+}
 
-m = MIDIFile(num_tracks, type=0) # 1 트랙
-track = m.addTrackName(1, 0, "New Track")
-
-for channel in range(0, num_tracks):
-    for pitch in pitch_range:
-        for time in [i * avg_note_duration_ms for i in range(note_count)]:
-            note_on = True
-            velocity = 32 + (127 - 32) // len(pitch_range) * (pitch - 33) #velocity 
-            m.noteOn(0, pitch, channel, velocity)
-            m.noteOn(1, pitch, channel, velocity)
-            
-            if time < avg_note_duration_ms:
-                note_off = False
-            else:
-                note_off = True
-            
-            m.noteOff(channel, pitch, 0, int(time))
-            if time >= avg_note_duration_ms:
-                m.noteOff(channel, pitch, 1, int(time))
-
-# saving the MIDI
-with open("output.mid", "wb") as output_file:
-    m.writeFile(output_file)
-```
-
-이 예에서는 평균 음표 길이가 1.2초인 100개의 노트가 하나의 트랙에 생성되며, 템포는 기본 130 BPM로 설정됩니다.
-
- 노트가 최소 100개 이상이어야 함을 확인하는 로직은 포함되지 않았습니다. 
- 노트의 시간은 계산된จร수를 사용해야 하므로 수식으로 표현하지 않도록 주의하세요.
- 노트의 피치 범위는 33에서 85 사이로 설정되어 있습니다. 
- 각 노트의 볼륨을 보정하기 위해 `velocity` 매개 변수가 사용됩니다.
- 노트가 반드시 100개 이상이어야 함을 확인하는 로직은 포함되지 않았습니다. 
-
-이 예를 사용하여 새로운 MIDI 파일을 생성하실 수 있습니다.
+print(json.dumps(json_response))
