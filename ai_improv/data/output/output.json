@@ -1,80 +1,53 @@
-{
-  "tracks": [
-    {
-      "instrument": 0,
-      "notes": [
-        {
-          "pitch": 43,
-          "time": 10,
-          "duration": 1.2,
-          "velocity": 64
-        },
-        {
-          "pitch": 76,
-          "time": 12,
-          "duration": 1.2,
-          "velocity": 100
-        },
-        {
-          "pitch": 73,
-          "time": 14,
-          "duration": 1.2,
-          "velocity": 96
-        },
-        {
-          "pitch": 69,
-          "time": 16,
-          "duration": 1.2,
-          "velocity": 64
-        },
-        {
-          "pitch": 79,
-          "time": 18,
-          "duration": 1.2,
-          "velocity": 32
-        },
-        {
-          "pitch": 61,
-          "time": 20,
-          "duration": 1.2,
-          "velocity": 100
-        },
-        {
-          "pitch": 67,
-          "time": 22,
-          "duration": 1.2,
-          "velocity": 96
-        },
-        {
-          "pitch": 77,
-          "time": 24,
-          "duration": 1.2,
-          "velocity": 64
-        },
-        {
-          "pitch": 79,
-          "time": 26,
-          "duration": 1.2,
-          "velocity": 32
-        },
-        {
-          "pitch": 73,
-          "time": 28,
-          "duration": 1.2,
-          "velocity": 96
-        },
-        {
-          "pitch": 75,
-          "time": 30,
-          "duration": 1.2,
-          "velocity": 100
-        }
-      ],
-      "instruments": []
-    }
-  ],
-  "time_signatures": [
-    "4/4"
-  ],
-  "key_signatures": []
-}
+below는 Python의 `midiutil` library를 사용하여 새로운 MIDI를 생성하는 예입니다.
+
+```python
+from midiutil import MIDIFile
+
+# 기본 특징 
+main_tempo = 130.0
+avg_note_duration = 1200 / 1000 # 평균 음표 길이 (ms)
+
+# 음표 수, 음높이 범위, 평균 음길이, 평균 세기
+note_count = 100
+pitch_range = range(33, 86) # 33에서 85 사이
+avg_pitch = sum(pitch_range) / len(pitch_range)
+avg_note_duration_ms = avg_note_duration * 1000 #平均 음표 길이 (ms)
+
+# 시간 계산 
+time_signature = "4/4"
+num_tracks = 1
+
+m = MIDIFile(num_tracks, type=0) # 1 트랙
+track = m.addTrackName(1, 0, "New Track")
+
+for channel in range(0, num_tracks):
+    for pitch in pitch_range:
+        for time in [i * avg_note_duration_ms for i in range(note_count)]:
+            note_on = True
+            velocity = 32 + (127 - 32) // len(pitch_range) * (pitch - 33) #velocity 
+            m.noteOn(0, pitch, channel, velocity)
+            m.noteOn(1, pitch, channel, velocity)
+            
+            if time < avg_note_duration_ms:
+                note_off = False
+            else:
+                note_off = True
+            
+            m.noteOff(channel, pitch, 0, int(time))
+            if time >= avg_note_duration_ms:
+                m.noteOff(channel, pitch, 1, int(time))
+
+# saving the MIDI
+with open("output.mid", "wb") as output_file:
+    m.writeFile(output_file)
+```
+
+이 예에서는 평균 음표 길이가 1.2초인 100개의 노트가 하나의 트랙에 생성되며, 템포는 기본 130 BPM로 설정됩니다.
+
+ 노트가 최소 100개 이상이어야 함을 확인하는 로직은 포함되지 않았습니다. 
+ 노트의 시간은 계산된จร수를 사용해야 하므로 수식으로 표현하지 않도록 주의하세요.
+ 노트의 피치 범위는 33에서 85 사이로 설정되어 있습니다. 
+ 각 노트의 볼륨을 보정하기 위해 `velocity` 매개 변수가 사용됩니다.
+ 노트가 반드시 100개 이상이어야 함을 확인하는 로직은 포함되지 않았습니다. 
+
+이 예를 사용하여 새로운 MIDI 파일을 생성하실 수 있습니다.
