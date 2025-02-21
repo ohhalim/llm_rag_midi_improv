@@ -1,7 +1,7 @@
 import json
 import re
 
-# 원본 파일에서 JSON 부분만 추출
+# 원본 파일에서 JSON 부분만 추출 
 def extract_json(file_path):
     with open(file_path, 'r') as f:
         content = f.read()

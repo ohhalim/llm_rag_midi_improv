@@ -25,3 +25,6 @@ midi_output = rag_system.generate(input_midi, output_format='midi')
 rag_system.save_midi(midi_output, 'data/output/output.mid')
 
 print("MIDI 생성 완료!")
+
+# 잘되는거 맞아?
+# 지금 까지 진행상황 뭐 어느정도 나오는거 같은데 미디파일 생성이 안돼 
