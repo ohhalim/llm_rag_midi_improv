@@ -1,35 +1,56 @@
-import random
 import json
+from random import randint, uniform
 
-# default parameters
-tracks = []
-key_signatures = ["C major"]
-time_signatures = ["4/4"]
+# MIDI 특징을 반영한 새로운 MIDI를 생성할 수단
+def create_midi():
+    # 기본 특징
+    tempo = {'main_tempo': 105.0, 'tempo_changes': 1}
+    harmony = ['E- major']
+    rhythm = {'avg_note_duration': uniform(0.9, 1.1), 'rhythmic_density': 236}
+    melody = {'pitch_range': (33, 85), 'avg_pitch': 69.49122807017544}
+    key_signatures = []
+    time_signatures = ['4/4']
+    instruments = ['Piano']
 
-def generate_midi():
-    # generate notes with given constraints
+    # estructural 특징
+    tracks = [0]
+    total_length = 0
+
+    # 노트의 수를 최소 100개 이상으로 설정합니다.
+    num_notes = randint(100, 200)
+
+    # 노트 생성
     notes = []
-    for _ in range(100):
-        pitch = random.randint(33, 85)
-        time = round(random.uniform(0, 1) * 120)
-        duration = round(random.uniform(0.6, 1.2), 3)
-        velocity = random.randint(32, 127)
-        notes.append({"pitch": pitch, "time": time, "duration": duration, "velocity": velocity})
-    
-    # create track with generated notes
-    tracks.append({
-        "instrument": 0,
-        "notes": notes
-    })
+    for i in range(num_notes):
+        pitch = uniform(melody['pitch_range'][0], melody['pitch_range'][1])
+        time = (i / num_notes) * total_length + (uniform(-1, 1))
+        duration = rhythm['avg_note_duration']
+        velocity = randint(32, 127)
+        
+        # note duration를 평균 1.2초로 설정합니다.
+        if abs(duration - uniform(0.9, 1.1)) > 0.01:
+            print(f"Warning: Note duration is not exactly {uniform(0.9, 1.1)} sec.")
 
-# generate midi
-generate_midi()
+        notes.append({'pitch': pitch, 'time': time, 'duration': duration, 'velocity': velocity})
 
-# create final json response
-json_response = {
-    "tracks": tracks,
-    "time_signatures": time_signatures,
-    "key_signatures": key_signatures
-}
+    #_tracks = [] 
+    tracks[0]['notes'] = notes
 
-print(json.dumps(json_response))
+    # 총 길이를 계산합니다.
+    total_length = num_notes * rhythm['avg_note_duration']
+
+    return {
+        "tracks": [
+            {
+                "instrument": 0,
+                "notes": notes
+            }
+        ],
+        "time_signatures": time_signatures,
+        "key_signatures": key_signatures
+    }
+
+# 생성된 MIDI를 JSON 형식으로 리턴합니다.
+midi_data = create_midi()
+
+print(json.dumps(midi_data, indent=2))

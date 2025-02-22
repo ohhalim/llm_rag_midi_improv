@@ -14,7 +14,7 @@ print(f"학습에 사용할 MIDI 파일 수: {len(training_files)}")
 rag_system.train(training_files)
 
 # 입력 MIDI 선택
-input_midi = 'data/training/moaninfunk.mid'  # 테스트에 사용한 동일한 파일
+input_midi = 'data/training/corazon_Jacob_Collier.mid'  # 테스트에 사용한 동일한 파일
 
 # MIDI 생성 (JSON 형식)
 json_output = rag_system.generate(input_midi, output_format='json')
