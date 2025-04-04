@@ -1,8 +1,0 @@
-#!/Users/ohhalim/git_box/llm_rag_midi_improv/ai_improv/app/home/ubuntu/midi_rag_system/midi-rag-env/bin/python
-# -*- coding: utf-8 -*-
-import re
-import sys
-from xattr.tool import main
-if __name__ == '__main__':
-    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
-    sys.exit(main())
