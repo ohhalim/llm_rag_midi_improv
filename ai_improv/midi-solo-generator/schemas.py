@@ -19,14 +19,14 @@ class MIDIFile(MIDIFileBase):
     class Config:
         orm_mode = True
 
-class YueModelBase(BaseModel):
+class TransformerModelBase(BaseModel):
     name: str
     description: Optional[str] = None
 
-class YueModelCreate(YueModelBase):
+class TransformerModelCreate(TransformerModelBase):
     pass
 
-class YueModel(YueModelBase):
+class TransformerModel(TransformerModelBase):
     id: int
     path: str
     upload_date: datetime

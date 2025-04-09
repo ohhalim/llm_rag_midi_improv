@@ -8,7 +8,7 @@ from datetime import datetime
 
 from database import SessionLocal, engine
 import models, schemas
-from midi_processor import YueProcessor, MIDIGenerator, FLStudioInterface
+from midi_processor import MusicTransformerProcessor, MIDIGenerator, FLStudioInterface
 
 # 모델 초기화
 models.Base.metadata.create_all(bind=engine)
@@ -29,13 +29,14 @@ def get_db():
 async def startup_event():
     global improvisation_system
     improvisation_system = {
-        "yue": YueProcessor("model_files/yue_base_model"),
+        "transformer": MusicTransformerProcessor("model_files/music_transformer_model"),
         "generator": MIDIGenerator("midi_database/"),
         "fl_interface": FLStudioInterface()
     }
     # 디렉토리 생성
     os.makedirs("uploads", exist_ok=True)
     os.makedirs("outputs", exist_ok=True)
+    os.makedirs("models", exist_ok=True)
 
 # MIDI 파일 관리 엔드포인트
 @app.post("/midi/upload/", response_model=schemas.MIDIFile)
@@ -112,21 +113,21 @@ def delete_midi_file(file_id: int, db: Session = Depends(get_db)):
     
     return {"message": "MIDI 파일이 성공적으로 삭제됨"}
 
-# YuE 기반 음악 데이터 엔드포인트
-@app.post("/yue/upload-model/")
-async def upload_yue_model(
+# Music Transformer 모델 엔드포인트
+@app.post("/transformer/upload-model/")
+async def upload_transformer_model(
     file: UploadFile = File(...),
     description: Optional[str] = Query(None),
     db: Session = Depends(get_db)
 ):
-    """새 YuE 모델 파일 업로드"""
+    """새 Music Transformer 모델 파일 업로드"""
     # 파일 저장
     file_path = f"models/{file.filename}"
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
     # DB 항목 생성
-    db_model = models.YueModel(
+    db_model = models.TransformerModel(
         name=file.filename.split(".")[0],
         path=file_path,
         description=description,
@@ -138,27 +139,27 @@ async def upload_yue_model(
     
     # 현재 모델 업데이트
     global improvisation_system
-    improvisation_system["yue"] = YueProcessor(file_path)
+    improvisation_system["transformer"] = MusicTransformerProcessor(file_path)
     
-    return {"message": "YuE 모델이 업로드되고 활성화됨", "model_id": db_model.id}
+    return {"message": "Music Transformer 모델이 업로드되고 활성화됨", "model_id": db_model.id}
 
-@app.get("/yue/models/", response_model=List[schemas.YueModel])
-def list_yue_models(db: Session = Depends(get_db)):
-    """사용 가능한 모든 YuE 모델 나열"""
-    return db.query(models.YueModel).all()
+@app.get("/transformer/models/", response_model=List[schemas.TransformerModel])
+def list_transformer_models(db: Session = Depends(get_db)):
+    """사용 가능한 모든 Music Transformer 모델 나열"""
+    return db.query(models.TransformerModel).all()
 
-@app.post("/yue/activate/{model_id}")
-def activate_yue_model(model_id: int, db: Session = Depends(get_db)):
-    """특정 YuE 모델 활성화"""
-    db_model = db.query(models.YueModel).filter(models.YueModel.id == model_id).first()
+@app.post("/transformer/activate/{model_id}")
+def activate_transformer_model(model_id: int, db: Session = Depends(get_db)):
+    """특정 Music Transformer 모델 활성화"""
+    db_model = db.query(models.TransformerModel).filter(models.TransformerModel.id == model_id).first()
     if not db_model:
-        raise HTTPException(status_code=404, detail="YuE 모델을 찾을 수 없음")
+        raise HTTPException(status_code=404, detail="Transformer 모델을 찾을 수 없음")
     
     # 현재 모델 업데이트
     global improvisation_system
-    improvisation_system["yue"] = YueProcessor(db_model.path)
+    improvisation_system["transformer"] = MusicTransformerProcessor(db_model.path)
     
-    return {"message": f"YuE 모델 {db_model.name}이(가) 성공적으로 활성화됨"}
+    return {"message": f"Music Transformer 모델 {db_model.name}이(가) 성공적으로 활성화됨"}
 
 # 즉흥연주 엔드포인트
 @app.post("/improvise/solo/{file_id}")
@@ -175,15 +176,15 @@ async def improvise_solo(
         raise HTTPException(status_code=404, detail="MIDI 파일을 찾을 수 없음")
     
     try:
-        # YuE를 통한 처리
+        # Music Transformer를 통한 처리
         with open(db_midi.path, "rb") as f:
             midi_data = f.read()
         
-        yue_context = improvisation_system["yue"].process_input(midi_data)
+        transformer_context = improvisation_system["transformer"].process_input(midi_data)
         
         # 즉흥 솔로 생성
         generated_midi = improvisation_system["generator"].generate_solo(
-            yue_context, 
+            transformer_context, 
             style=style,
             complexity=complexity,
             length=length
@@ -242,12 +243,45 @@ async def send_to_fl_studio(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"FL Studio 통신 실패: {str(e)}")
 
+# 실시간 즉흥연주 엔드포인트
+@app.post("/improvise/realtime")
+async def realtime_improvisation(
+    midi_data: bytes = File(...),
+    style: str = "jazz_funk",
+    complexity: float = 0.7,
+    length: int = 8
+):
+    """
+    실시간으로 제공된 MIDI 데이터에 기반한 즉흥 솔로 생성
+    FL Studio에서 직접 MIDI 데이터를 제공할 수 있음
+    """
+    try:
+        # Music Transformer를 통한 처리
+        transformer_context = improvisation_system["transformer"].process_input(midi_data)
+        
+        # 즉흥 솔로 생성
+        generated_midi = improvisation_system["generator"].generate_solo(
+            transformer_context, 
+            style=style,
+            complexity=complexity,
+            length=length
+        )
+        
+        # FL Studio로 직접 전송
+        if improvisation_system["fl_interface"].send_midi(generated_midi):
+            return {"message": "실시간 즉흥연주가 FL Studio로 전송됨"}
+        else:
+            return {"message": "실시간 즉흥연주 생성 성공, 전송 실패", "status": "partial_success"}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"실시간 즉흥연주 생성 실패: {str(e)}")
+
 # 시스템 상태 및 구성
 @app.get("/system/status")
 async def system_status():
     """시스템 구성 요소의 현재 상태 확인"""
     return {
-        "yue_model": improvisation_system["yue"].get_model_info(),
+        "transformer_model": improvisation_system["transformer"].get_model_info(),
         "midi_generator": improvisation_system["generator"].get_status(),
         "fl_studio": improvisation_system["fl_interface"].get_connection_status()
     }

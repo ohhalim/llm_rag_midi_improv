@@ -33,8 +33,8 @@ class MIDIFile(Base):
     
     derived_files = relationship("MIDIFile", backref="source_file", remote_side=[id])
 
-class YueModel(Base):
-    __tablename__ = "yue_models"
+class TransformerModel(Base):
+    __tablename__ = "transformer_models"
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
